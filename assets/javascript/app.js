@@ -1,10 +1,5 @@
 $(document).ready(function(){
 
-var correctAnswers = 0;
-var wrongAnswers = 0;
-var unanswered = 0;
-var next = 0;
-
 //JSON Object with questions & correct answers
 var questionsArray = [
     {
@@ -41,6 +36,10 @@ var questionsArray = [
 
 var currentQuestion = questionsArray[0];
 var numChoices = currentQuestion.choices.length;
+var correctAnswers = 0;
+var wrongAnswers = 0;
+var unanswered = 0;
+var next = 0;
 
 //function to start the game
 function startGame() {
@@ -64,8 +63,9 @@ function startGame() {
     $('#questions').show();
 }
 
-// for (var i = 0; i<questionsArray.length; i++) {
-$('.next').click(function() {
+//show next question & answers on click
+$('#answers').on('click', '.choice', function(){
+    //empty the choices before displaying next question
     $('#answers').empty();
     console.log('next clicked!');
     next++;
