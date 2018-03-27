@@ -5,4 +5,9 @@
 .choice {
     min-height: 20px;
     min-width: 100px;
+    cursor: pointer;
+}
+
+.choice:hover {
+    text-decoration: underline;
 }

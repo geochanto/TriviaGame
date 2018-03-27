@@ -1,86 +1,119 @@
-$(document).ready(function(){
+$(document).ready(function() {
 
-//JSON Object with questions & correct answers
-var questionsArray = [
-    {
-        questionText: "who?",
-        choices: [
-            "you",
-            "me",
-            "her",
-            "him"
-        ],
-        correct: "her"
-    },
-    {
-        questionText: "what?",
-        choices: [
-            "this",
-            "that",
-            "it",
-        ],
-        correct: "this"
-    },
-    {
-        questionText: "where?",
-        choices: [
-            "here",
-            "there",
-            "yonder",
-            "near"
+    //JSON Object with questions & correct answers
+    var questionsArray = [{
+            questionText: "who?",
+            choices: [
+                "you",
+                "me",
+                "her",
+                "him"
+            ],
+            correct: "her"
+        },
+        {
+            questionText: "what?",
+            choices: [
+                "this",
+                "that",
+                "it",
+            ],
+            correct: "this"
+        },
+        {
+            questionText: "where?",
+            choices: [
+                "here",
+                "there",
+                "yonder",
+                "near"
 
-        ],
-        correct: "near"
-    }
-]
+            ],
+            correct: "near"
+        }
+    ]
 
-var currentQuestion = questionsArray[0];
-var numChoices = currentQuestion.choices.length;
-var correctAnswers = 0;
-var wrongAnswers = 0;
-var unanswered = 0;
-var next = 0;
-
-//function to start the game
-function startGame() {
-    //reset answers on game start
-    correctAnswers = 0;
-    wrongAnswers = 0;
-    unanswered = 0;
     var currentQuestion = questionsArray[0];
-    
-    console.log('started!');
-    $('#questionText').text(currentQuestion.questionText);
-    for (var i = 0; i<numChoices; i++) {
-        var choice = currentQuestion.choices[i];
-        $('#answers').append('<div class="choice" data-attribute='+ choice +'>'+ choice +'</div>');
+    var numQuestions = questionsArray.length;
+    var numChoices = currentQuestion.choices.length;
+    var correctAnswers = 0;
+    var wrongAnswers = 0;
+    var unanswered = 0;
+    var next = 0;
+
+    //function to start the game
+    function startGame() {
+        //reset answers on game start
+        correctAnswers = 0;
+        wrongAnswers = 0;
+        unanswered = 0;
+        var currentQuestion = questionsArray[0];
+
+        $('#questionText').text(currentQuestion.questionText);
+        for (var i = 0; i < numChoices; i++) {
+            var choice = currentQuestion.choices[i];
+            $('#answers').append('<div class="choice" data-attribute=' + choice + '>' + choice + '</div>');
+        }
+
+        //hide the intro on game start
+        $('#intro').hide();
+
+        //show the questions div on game start
+        $('#questions').show();
     }
 
-    //hide the intro on game start
-    $('#intro').hide();
+    //show next question & answers on click
+    $('#answers').on('click', '.choice', function() {
+        //empty the choices before displaying next question
+        $('#answers').empty();
 
-    //show the questions div on game start
-    $('#questions').show();
-}
+        //define correct answer variable
+        var correctAnswer = currentQuestion.correct;
 
-//show next question & answers on click
-$('#answers').on('click', '.choice', function(){
-    //empty the choices before displaying next question
-    $('#answers').empty();
-    console.log('next clicked!');
-    next++;
-    currentQuestion = questionsArray[next];
-    numChoices = currentQuestion.choices.length;
-    $('#questionText').text(currentQuestion.questionText);
-    for (var i = 0; i<numChoices; i++) {
-        var choice = currentQuestion.choices[i];
-        $('#answers').append('<div class="choice" data-attribute='+ choice +'>'+ choice +'</div>');
-    }
-});
+        //increment to the next question
+        next++;
+        currentQuestion = questionsArray[next];
 
-//call start game function when user clicks start or restart
-$('.start-restart').click(function() {
-startGame();
-});
+
+        if (next < numQuestions) {
+            //define a variable for number of choices for current question
+            numChoices = currentQuestion.choices.length;
+
+            //fill in current question text from JSON
+            $('#questionText').text(currentQuestion.questionText);
+
+            //show as many choices as current question has
+            for (var i = 0; i < numChoices; i++) {
+                var choice = currentQuestion.choices[i];
+                $('#answers').append('<div class="choice" data-attribute=' + choice + '>' + choice + '</div>');
+            }
+        }
+        //grab the value of chosen answer
+        var chosen = $(this).attr('data-attribute');
+
+        //if correct answer chosen
+        if (chosen === correctAnswer) {
+            correctAnswers++;
+            console.log('correct: ' + correctAnswers);
+        }
+
+        //if incorrect answer chosen
+        else if (chosen !== correctAnswer) {
+            wrongAnswers++;
+            console.log('wrong: ' + wrongAnswers);
+        }
+
+        //if time ran out
+        else {
+            unanswered++;
+            console.log('unanswered: ' + unanswered);
+        }
+
+    });
+
+    //call start game function when user clicks start or restart
+    $('.start-restart').click(function() {
+        startGame();
+    });
 
 });
