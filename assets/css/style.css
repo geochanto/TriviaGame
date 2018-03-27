@@ -1,3 +1,8 @@
 #questions, #outro {
     display: none;
 }
+
+.choice {
+    min-height: 20px;
+    min-width: 100px;
+}
