@@ -41,14 +41,17 @@ $(document).ready(function() {
     var unanswered = 0;
     var next = 0;
 
+    var remaining = 3;    
+    
+
     //function to start the game
     function startGame() {
         //reset answers on game start
         correctAnswers = 0;
         wrongAnswers = 0;
         unanswered = 0;
+        next = 0;
         var currentQuestion = questionsArray[0];
-
         $('#questionText').text(currentQuestion.questionText);
         for (var i = 0; i < numChoices; i++) {
             var choice = currentQuestion.choices[i];
@@ -60,6 +63,14 @@ $(document).ready(function() {
 
         //show the questions div on game start
         $('#questions').show();
+    }
+
+    function endGame(){
+        $('#questions').hide();
+        $('#outro').show();
+        $('#correct span').text(correctAnswers);
+        $('#wrong span').text(wrongAnswers);
+        $('#unanswered span').text(unanswered);
     }
 
     //show next question & answers on click
@@ -88,6 +99,11 @@ $(document).ready(function() {
                 $('#answers').append('<div class="choice" data-attribute=' + choice + '>' + choice + '</div>');
             }
         }
+
+        else if (next == numQuestions) {
+            endGame();
+        }
+
         //grab the value of chosen answer
         var chosen = $(this).attr('data-attribute');
 
