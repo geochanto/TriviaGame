@@ -41,8 +41,9 @@ $(document).ready(function() {
     var unanswered = 0;
     var next = 0;
 
-    var remaining = 3;    
-    
+    var number = 5;
+    var intervalId;    
+    var clockRunning = false;
 
     //function to start the game
     function startGame() {
@@ -52,6 +53,7 @@ $(document).ready(function() {
         unanswered = 0;
         next = 0;
         currentQuestion = questionsArray[0];
+        clockRunning = true;
         
         $('#questionText').text(currentQuestion.questionText);
         for (var i = 0; i < numChoices; i++) {
@@ -65,6 +67,7 @@ $(document).ready(function() {
 
         //show the questions div on game start
         $('#questions').show();
+        countDown();
     }
 
     function endGame(){
@@ -73,11 +76,71 @@ $(document).ready(function() {
         $('#correct span').text(correctAnswers);
         $('#wrong span').text(wrongAnswers);
         $('#unanswered span').text(unanswered);
+        stopWatch();
     }
 
+    function countDown() {
+        clearInterval(intervalId);
+        intervalId = setInterval(decrement, 1000);
+        clockRunning = true;
+    }
 
+    function resetWatch() {
+        //clearInterval(intervalId);
+        number = 5;
+        console.log('reset!');
+      }
+
+    function stopWatch() {
+      clearInterval(intervalId);
+      clockRunning = false;
+    }
+      //move on to next question
+      function nextQuestion() {
+        $('.modal').modal('show');
+        setTimeout(function(){ 
+        $('#time').show();
+        $('.modal').modal('hide');
+        //define a variable for number of choices for current question
+        numChoices = currentQuestion.choices.length;
+
+        //fill in current question text from JSON
+        $('#questionText').text(currentQuestion.questionText);
+
+        //show as many choices as current question has
+        for (var i = 0; i < numChoices; i++) {
+            var choice = currentQuestion.choices[i];
+            $('#answers').append('<div class="choice" data-attribute=' + choice + '>' + choice + '</div>');
+        }
+        countDown();
+         }, 3000);
+      }
+
+      function decrement() {
+        //  Decrease number by one.
+        number--;
+  
+        //  Show the number in the #show-number tag.
+        $("#remaining").text(number);
+
+        //  Once number hits zero...
+        if (number === 0) {
+  
+          //  ...run the stop function.
+          
+          resetWatch();
+          nextQuestion();
+          //  Alert the user that time is up.
+          $('.modal-title').html("Time's Up :(");
+          $('.modal-body').html('Try your luck with the next Question.');
+          unanswered++;
+        }
+      }
+      
     //show next question & answers on click
     $('#answers').on('click', '.choice', function() {
+        resetWatch();
+        
         //define correct answer variable
         var correctAnswer = currentQuestion.correct;
 
@@ -91,22 +154,7 @@ $(document).ready(function() {
 
 
         if (next < numQuestions) {
-            $('.modal').modal('show');
-            setTimeout(function(){ 
-            $('#time').show();
-            $('.modal').modal('hide');
-            //define a variable for number of choices for current question
-            numChoices = currentQuestion.choices.length;
-
-            //fill in current question text from JSON
-            $('#questionText').text(currentQuestion.questionText);
-
-            //show as many choices as current question has
-            for (var i = 0; i < numChoices; i++) {
-                var choice = currentQuestion.choices[i];
-                $('#answers').append('<div class="choice" data-attribute=' + choice + '>' + choice + '</div>');
-            }
-        }, 3000);
+            nextQuestion();
         }
 
         //grab the value of chosen answer
@@ -128,11 +176,7 @@ $(document).ready(function() {
             console.log('wrong: ' + wrongAnswers);
         }
 
-        //if time ran out
-        else {
-            unanswered++;
-            console.log('unanswered: ' + unanswered);
-        }
+
 
         if (next == numQuestions) {
             $('.modal').modal('show');
@@ -146,7 +190,6 @@ $(document).ready(function() {
 
     //call start game function when user clicks start or restart
     $('.start-restart').click(function() {
-        
         startGame();
     });
 
