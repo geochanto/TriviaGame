@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+    
     //JSON Object with questions & correct answers
     var questionsArray = [{
             questionText: "who?",
@@ -67,10 +67,6 @@ $(document).ready(function() {
         $('#questions').show();
     }
 
-    function checkChoice() {
-        
-    }
-
     function endGame(){
         $('#questions').hide();
         $('#outro').show();
@@ -79,20 +75,26 @@ $(document).ready(function() {
         $('#unanswered span').text(unanswered);
     }
 
+
     //show next question & answers on click
     $('#answers').on('click', '.choice', function() {
-        //empty the choices before displaying next question
-        $('#answers').empty();
-
         //define correct answer variable
         var correctAnswer = currentQuestion.correct;
 
+        //empty the choices before displaying next question
+        $('#answers').empty();
+        $('#questionText').empty();
+        $('#time').hide();
         //increment to the next question
         next++;
         currentQuestion = questionsArray[next];
 
 
         if (next < numQuestions) {
+            $('.modal').modal('show');
+            setTimeout(function(){ 
+            $('#time').show();
+            $('.modal').modal('hide');
             //define a variable for number of choices for current question
             numChoices = currentQuestion.choices.length;
 
@@ -104,6 +106,7 @@ $(document).ready(function() {
                 var choice = currentQuestion.choices[i];
                 $('#answers').append('<div class="choice" data-attribute=' + choice + '>' + choice + '</div>');
             }
+        }, 3000);
         }
 
         //grab the value of chosen answer
@@ -112,12 +115,16 @@ $(document).ready(function() {
         //if correct answer chosen
         if (chosen === correctAnswer) {
             correctAnswers++;
+            $('.modal-title').html('You got it!');
+            $('.modal-body').html('<b>'+correctAnswer+'</b>' + ' is indeed the correct answer.');
             console.log('correct: ' + correctAnswers);
         }
 
         //if incorrect answer chosen
         else if (chosen !== correctAnswer) {
             wrongAnswers++;
+            $('.modal-title').html('Nope!');
+            $('.modal-body').html('<b>'+correctAnswer+'</b>' + ' is the correct answer.');
             console.log('wrong: ' + wrongAnswers);
         }
 
@@ -127,16 +134,19 @@ $(document).ready(function() {
             console.log('unanswered: ' + unanswered);
         }
 
-        checkChoice();
-
         if (next == numQuestions) {
-            endGame();
+            $('.modal').modal('show');
+            setTimeout(function(){ 
+                $('.modal').modal('hide');
+                endGame();
+            }, 3000);
         }
-
     });
+
 
     //call start game function when user clicks start or restart
     $('.start-restart').click(function() {
+        
         startGame();
     });
 
