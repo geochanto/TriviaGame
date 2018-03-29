@@ -51,18 +51,24 @@ $(document).ready(function() {
         wrongAnswers = 0;
         unanswered = 0;
         next = 0;
-        var currentQuestion = questionsArray[0];
+        currentQuestion = questionsArray[0];
+        
         $('#questionText').text(currentQuestion.questionText);
         for (var i = 0; i < numChoices; i++) {
             var choice = currentQuestion.choices[i];
             $('#answers').append('<div class="choice" data-attribute=' + choice + '>' + choice + '</div>');
         }
 
-        //hide the intro on game start
+        //hide the intro & outro on game start
         $('#intro').hide();
+        $('#outro').hide();
 
         //show the questions div on game start
         $('#questions').show();
+    }
+
+    function checkChoice() {
+        
     }
 
     function endGame(){
@@ -100,10 +106,6 @@ $(document).ready(function() {
             }
         }
 
-        else if (next == numQuestions) {
-            endGame();
-        }
-
         //grab the value of chosen answer
         var chosen = $(this).attr('data-attribute');
 
@@ -123,6 +125,12 @@ $(document).ready(function() {
         else {
             unanswered++;
             console.log('unanswered: ' + unanswered);
+        }
+
+        checkChoice();
+
+        if (next == numQuestions) {
+            endGame();
         }
 
     });
